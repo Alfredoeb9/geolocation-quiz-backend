@@ -44,10 +44,9 @@ const login = async (req, res, next) => {
     // await newUser.save();
     // res.status(201).send("User has been created");
   } catch (error) {
-    console.log("next ran");
     return res
       .status(400)
-      .json({ error: "Refresh the page and please try logging in again" });
+      .json({ error: "Please provide correct credentials" });
   }
 };
 

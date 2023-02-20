@@ -34,12 +34,12 @@ const createGeolocationQuiz = async (req, res) => {
   let emptyFields = [];
 
   const newGeolocationQuiz = new Geolocation(req.body);
-  console.log(newGeolocationQuiz);
+  //   console.log(newGeolocationQuiz);
 
   try {
     const savedGeolocationQuiz = await newGeolocationQuiz.save();
 
-    console.log(savedGeolocationQuiz);
+    // console.log(savedGeolocationQuiz);
 
     return res.status(201).json(savedGeolocationQuiz);
     // const geolocationQuiz = await Geolocation.create({

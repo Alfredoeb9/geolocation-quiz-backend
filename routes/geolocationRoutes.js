@@ -6,6 +6,7 @@ const {
   createGeolocationQuiz,
   deleteGeolocationQuiz,
 } = require("../controller/geolocationController");
+const { verifyAdmin } = require("../middleware/requireAuth");
 const router = express.Router();
 
 // require a middleware if user has paid for payment content
@@ -13,7 +14,7 @@ const router = express.Router();
 // router.use(requireAuth);
 
 // POST new geolocation-quiz
-router.post("/createquiz", createGeolocationQuiz);
+router.post("/createquiz", verifyAdmin, createGeolocationQuiz);
 
 // GET ALL geolocation-quiz-stages
 router.get("/", getGeolocationQuizzes);

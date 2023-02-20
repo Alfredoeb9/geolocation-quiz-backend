@@ -36,6 +36,16 @@ const createGeolocationQuiz = async (req, res) => {
   const newGeolocationQuiz = new Geolocation(req.body);
   //   console.log(newGeolocationQuiz);
 
+  if (!req.params.country) {
+    emptyFields.push("title");
+  }
+
+  if (emptyFields.length > 0) {
+    return res
+      .status(400)
+      .json({ error: "Please fill in all the fields", emptyFields });
+  }
+
   try {
     const savedGeolocationQuiz = await newGeolocationQuiz.save();
 

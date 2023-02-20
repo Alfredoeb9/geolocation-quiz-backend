@@ -6,7 +6,7 @@ const {
   createGeolocationQuiz,
   deleteGeolocationQuiz,
 } = require("../controller/geolocationController");
-const { verifyAdmin } = require("../middleware/requireAuth");
+const { verifyAdmin, verifyUser } = require("../middleware/requireAuth");
 const router = express.Router();
 
 // require a middleware if user has paid for payment content
@@ -20,10 +20,10 @@ router.post("/createquiz", verifyAdmin, createGeolocationQuiz);
 router.get("/", getGeolocationQuizzes);
 
 // GET ALL geolocation-quiz-stages
-router.get("/:id", getGeolocationQuiz);
+router.get("/:id", verifyUser, getGeolocationQuiz);
 
 // DELETE seleceted geolocation-quiz
-router.delete("/:id", deleteGeolocationQuiz);
+router.delete("/:id", verifyAdmin, deleteGeolocationQuiz);
 
 // POST answers to geolocation-quiz-stages
 router.post("/:id", answerGeolocationQuiz);

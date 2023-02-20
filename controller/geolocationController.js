@@ -36,8 +36,12 @@ const createGeolocationQuiz = async (req, res) => {
   const newGeolocationQuiz = new Geolocation(req.body);
   //   console.log(newGeolocationQuiz);
 
-  if (!req.params.country) {
+  if (!req.body.country) {
     emptyFields.push("title");
+  }
+
+  if (!req.body.paidContent) {
+    emptyFields.push("paidContent");
   }
 
   if (emptyFields.length > 0) {

@@ -4,12 +4,15 @@ const mongoose = require("mongoose");
 const getGeolocationQuiz = async (req, res) => {
   // grab the id of the geolocation quiz wanting to play in the URL
   const { id } = req.params;
+  const { quizNum } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No Such Quiz!" });
   }
 
-  const geolocationQuiz = await Geolocation.findById(id);
+  const geolocationQuiz = await Geolocation.findById(id, {
+    questions: { $slice: Number(quizNum) },
+  });
 
   if (!geolocationQuiz) {
     return res.status(400).json({ error: "No Such Quiz!" });

@@ -19,8 +19,8 @@ router.post("/createquiz", verifyAdmin, createGeolocationQuiz);
 // GET ALL geolocation-quiz-stages
 router.get("/", getGeolocationQuizzes);
 
-// GET ALL geolocation-quiz-stages
-router.get("/:id", verifyUser, getGeolocationQuiz);
+// GET one geolocation-quiz-stages
+router.post("/:id", getGeolocationQuiz);
 
 // DELETE seleceted geolocation-quiz
 router.delete("/:id", verifyAdmin, deleteGeolocationQuiz);

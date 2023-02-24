@@ -16,7 +16,7 @@ const storeResult = async (req, res) => {
   try {
     const { username, result, attempts, points, achived } = req.body;
 
-    if (!username && !result) throw new Error("Data Not Provided...!");
+    if (!result) throw new Error("Data Not Provided...!");
 
     const createdResult = await Result.create({
       username,

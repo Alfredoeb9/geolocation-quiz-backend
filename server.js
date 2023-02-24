@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
 const geolocationRoutes = require("./routes/geolocationRoutes");
 const userRoutes = require("./routes/userRoutes");
+const resultRoutes = require("./routes/resultRoutes");
+const testRoutes = require("./routes/testRoutes");
 
 // express app
 const app = express();
@@ -13,10 +15,6 @@ const app = express();
 app.use(cors());
 
 app.use(express.json());
-
-app.use("/api/auth", authRoutes);
-app.use("/api/geolocation", geolocationRoutes);
-app.use("/api/user", userRoutes);
 
 // middleware
 app.use((req, res, next) => {
@@ -27,6 +25,12 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+app.use("/api/auth", authRoutes);
+app.use("/api/geolocation", geolocationRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/result", resultRoutes);
+app.use("/api/test", testRoutes);
 
 mongoose.set("strictQuery", false);
 

@@ -22,11 +22,12 @@ const getGeolocationQuiz = async (req, res) => {
 };
 
 const getGeolocationQuizzes = async (req, res) => {
+  console.log("grabbing all quzzes");
   try {
     const allGeolocationQuizzes = await Geolocation.find();
-    return res.status(200).json(allGeolocationQuizzes);
+    res.status(200).json(allGeolocationQuizzes);
   } catch (error) {
-    return res.status(400).json({ error: error });
+    res.status(400).json({ error: error });
   }
 };
 

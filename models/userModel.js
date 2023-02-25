@@ -19,6 +19,20 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    verification: {
+      token: {
+        type: String,
+        default: "",
+      },
+      expireTime: {
+        type: Date,
+        default: null,
+      },
+      isVerified: {
+        type: Boolean,
+        default: false,
+      },
+    },
     isAdmin: {
       type: Boolean,
       default: false,

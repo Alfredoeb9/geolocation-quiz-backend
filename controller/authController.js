@@ -6,9 +6,8 @@ const createToken = (_id, isAdmin) => {
 };
 
 const register = async (req, res, next) => {
-  console.log(req.body);
-  const { username, email, password, isAdmin } = req.body;
   try {
+    const { username, email, password, isAdmin } = req.body;
     const newUser = await User.register(username, email, password, isAdmin);
 
     // create a token per user

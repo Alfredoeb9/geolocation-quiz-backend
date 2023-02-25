@@ -5,7 +5,10 @@ const {
   getOneUser,
   updateUser,
   deleteUser,
+  postLogin,
+  signUpUser,
 } = require("../controller/userController");
+
 const {
   requireAuth,
   verifyAdmin,

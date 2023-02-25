@@ -1,6 +1,5 @@
 const Result = require("../models/resultsModel");
 const mongoose = require("mongoose");
-const resultsModel = require("../models/resultsModel");
 
 const getResult = async (req, res) => {
   try {
@@ -14,12 +13,13 @@ const getResult = async (req, res) => {
 
 const storeResult = async (req, res) => {
   try {
-    const { username, result, attempts, points, achived } = req.body;
+    const { username, quizId, result, attempts, points, achived } = req.body;
 
     if (!result) throw new Error("Data Not Provided...!");
 
     const createdResult = await Result.create({
       username,
+      quizId,
       result,
       attempts,
       points,
@@ -28,7 +28,6 @@ const storeResult = async (req, res) => {
 
     return res.status(201).json(createdResult);
   } catch (error) {
-    console.log(error);
     return res.status(400).json({ error: error });
   }
 };

@@ -10,6 +10,14 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
+    firstName: {
+      type: String,
+      default: "",
+    },
+    lastName: {
+      type: String,
+      default: "",
+    },
     email: {
       type: String,
       required: true,
@@ -70,6 +78,8 @@ userSchema.statics.login = async function (email, password) {
 // Static register method
 userSchema.statics.register = async function (
   username,
+  firstName,
+  lastName,
   email,
   password,
   isAdmin
@@ -102,6 +112,8 @@ userSchema.statics.register = async function (
 
   const user = await this.create({
     username,
+    firstName,
+    lastName,
     email,
     password: hash,
     isAdmin,

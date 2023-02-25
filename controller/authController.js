@@ -1,4 +1,6 @@
 const User = require("../models/userModel");
+const { adminFrontendUrl } = require("../bin/constant/setup");
+const { sendVerifyingUserEmail } = require("../lib/mailer");
 const jwt = require("jsonwebtoken");
 
 const createToken = (_id, isAdmin) => {
@@ -7,11 +9,28 @@ const createToken = (_id, isAdmin) => {
 
 const register = async (req, res, next) => {
   try {
-    const { username, email, password, isAdmin } = req.body;
-    const newUser = await User.register(username, email, password, isAdmin);
+    const { username, firstName, lastName, email, password, isAdmin } =
+      req.body;
+    // console.log(req);
+    const newUser = await User.register(
+      username,
+      firstName,
+      lastName,
+      email,
+      password,
+      isAdmin
+    );
+    // console.log(newUser);
 
     // create a token per user
     const token = createToken(newUser._id);
+
+    const link = `${process.env.REACT_APP_AUTH_BASE_URL}/verify-email/${token}`;
+    const fullName = newUser.firstName + " " + newUser.lastName;
+
+    console.log("from register backend", newUser.email, fullName, link);
+
+    await sendVerifyingUserEmail(newUser.email, fullName, link);
 
     // return the users info down below
     return res.status(200).json({ email, token });

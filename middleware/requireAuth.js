@@ -6,24 +6,30 @@ const User = require("../models/userModel");
 const requireAuth = async (req, res, next) => {
   // verify authentication
   // grab the auth from the headers
-  const { cookie } = req.headers;
+  const { authorization } = req.headers;
 
-  if (!cookie) {
+  console.log(authorization);
+
+  if (!authorization) {
     return res.status(401).json({ error: "Authorization token required" });
     // return next(handleError(401, "Authorization token required"));
   }
 
   // split the auth value and split on the space
-  let token = cookie.split("access_token=")[1];
+  // let token = cookie.split("access_token=")[1];
 
   // check if token has been tampered with or not
   try {
-    const { _id } = verifyToken(token, process.env.JWT_SECRET, res);
+    const { _id } = await verifyToken(
+      authorization,
+      process.env.JWT_SECRET,
+      res
+    );
     // console.log(_id);
     // find the user with the id that matches
     req.user = await User.findOne({ _id }).select("_id");
     // console.log("req.user", req.user);
-    next();
+    return next();
   } catch (error) {
     console.log(error);
     return res.status(401).json({ error: "Request is not Authorized!" });

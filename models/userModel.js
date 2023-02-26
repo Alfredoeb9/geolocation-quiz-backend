@@ -7,7 +7,6 @@ const userSchema = new Schema(
   {
     username: {
       type: String,
-      required: true,
       unique: true,
     },
     firstName: {
@@ -68,6 +67,8 @@ userSchema.statics.login = async function (email, password) {
   // need to march the password with hash password
   const passwordMatch = await bcrypt.compare(password, user.password);
 
+  console.log("password matching", passwordMatch);
+
   if (!passwordMatch) {
     throw Error("Incorrect login credentials");
   }
@@ -120,6 +121,32 @@ userSchema.statics.register = async function (
   });
 
   return user;
+};
+
+// Static verify method
+userSchema.statics.verifyEmail = async function (query = {}) {
+  console.log("query", query);
+  const user = await this.findOne(query).lean().exec();
+  console.log("user", user);
+  if (user) {
+    user.userId = user._id;
+    // if (user.avatar) {
+    //   const regExp =
+    //     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
+    //   if (!regExp.test(user.avatar)) {
+    //     user.avatar = (
+    //       path.join(__dirname, "/../../", "/public/upload/") + user.avatar
+    //     ).replace(/\\/g, "/");
+    //   }
+    // }
+  }
+
+  return user;
+};
+
+userSchema.statics.updateVerification = async function (_id, body) {
+  const result = await this.findByIdAndUpdate(_id, body, { new: true }).exec();
+  return result;
 };
 
 module.exports = mongoose.model("User", userSchema);

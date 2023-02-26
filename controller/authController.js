@@ -11,7 +11,7 @@ const { adminFrontendUrl } = require("../bin/constant/setup");
 const { sendVerifyingUserEmail } = require("../lib/mailer");
 const jwt = require("jsonwebtoken");
 
-const createToken = (_id, isAdmin) => {
+const createToken = async (_id, isAdmin) => {
   return jwt.sign({ _id, isAdmin: isAdmin }, process.env.JWT_SECRET);
 };
 
@@ -62,20 +62,28 @@ const login = async (req, res, next) => {
 
     console.log("we have a user", user);
 
-    const { password, isAdmin, ...otherDetails } = user._doc;
+    // const { password, isAdmin, ...otherDetails } = user._doc;
 
     // create a token per user
-    const token = createToken(user._id, isAdmin);
+    const token = await createToken(user._id, user._doc.isAdmin);
+
+    const verification = {
+      token: token,
+      expireTime: addTime(1, getCurrentDateTime(), "hours"),
+      isVerified: true,
+    };
 
     const updatedUser = await User.updateVerification(
       { _id: user._id },
-      { verification: token }
+      { verification }
     );
+
+    const { password, isAdmin, ...otherDetails } = updatedUser._doc;
 
     // token: { accessToken: verification.token }, _id: updatedUser._id, email: updatedUser.email, type: updatedUser.type, aiCredits: updatedUser.aiCredits, firstName: updatedUser.firstName, lastName: updatedUser.lastName, country: updatedUser.country }
 
     // return the users info down below
-    return res.status(200).json({ email, token, updatedUser });
+    return res.status(200).json({ email, token, ...otherDetails });
     // await newUser.save();
     // res.status(201).send("User has been created");
   } catch (error) {

@@ -28,10 +28,14 @@ const register = async (req, res, next) => {
       password,
       isAdmin
     );
-    // console.log(newUser);
+    console.log(newUser);
 
     // create a token per user
-    const token = createToken(newUser._id);
+    const token = await createToken(newUser._id);
+
+    console.log(token);
+
+    // token.then((data) => console.log(data));
 
     const link = `${process.env.REACT_APP_AUTH_BASE_URL}/verify-email/${token}`;
     const fullName = newUser.firstName + " " + newUser.lastName;
@@ -120,9 +124,12 @@ const verifyEmail = async (req, res, next) => {
     );
     if (!payload)
       res.status(400).json({ error: "Verification Data Not Updated" });
+
+    const { password, isAdmin, ...otherDetails } = payload._doc;
     // if (!payload) throw staticResponseMessageObject.verificationDataNotUpdated;
 
     return res.status(200).json({
+      ...otherDetails,
       message: "User Authenicated",
     });
   } catch (error) {

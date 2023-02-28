@@ -141,7 +141,6 @@ const verifyEmail = async (req, res, next) => {
 
 const resendVerificationEmail = async (req, res, next) => {
   try {
-    console.log("resend", req);
     const { email } = req.body;
 
     // const fields = ['email']

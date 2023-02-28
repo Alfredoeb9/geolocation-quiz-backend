@@ -28,19 +28,19 @@ const register = async (req, res, next) => {
       password,
       isAdmin
     );
-    console.log(newUser);
+    // console.log(newUser);
 
     // create a token per user
     const token = await createToken(newUser._id);
 
-    console.log(token);
+    // console.log(token);
 
     // token.then((data) => console.log(data));
 
     const link = `${process.env.REACT_APP_AUTH_BASE_URL}/verify-email/${token}`;
     const fullName = newUser.firstName + " " + newUser.lastName;
 
-    console.log("from register backend", newUser.email, fullName, link);
+    // console.log("from register backend", newUser.email, fullName, link);
 
     await sendVerifyingUserEmail(newUser.email, fullName, link);
 
@@ -59,12 +59,12 @@ const register = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  console.log(req.body);
+  // console.log(req.body);
   const { email } = req.body;
   try {
     const user = await User.login(email, req.body.password);
 
-    console.log("we have a user", user);
+    // console.log("we have a user", user);
 
     // const { password, isAdmin, ...otherDetails } = user._doc;
 
@@ -139,8 +139,45 @@ const verifyEmail = async (req, res, next) => {
   }
 };
 
+const resendVerificationEmail = async (req, res, next) => {
+  try {
+    console.log("resend", req);
+    const { email } = req.body;
+
+    // const fields = ['email']
+    // await checkRequiredParams(fields, { email })
+
+    const user = await User.verifyEmail({ email: email.toLowerCase() });
+    if (!user) {
+      console.log("new user found...!");
+      // return next(
+      //   Boom.notFound((await responseMessageObject("User", null)).notFoundError)
+      // );
+    }
+    if (user && user.verification && user.verification.isVerified)
+      console.log("Eamil is verified");
+    // throw staticResponseMessageObject.emailAlreadyVerified;
+
+    const token = await createToken(user._id);
+
+    const link = `${process.env.REACT_APP_AUTH_BASE_URL}/verify-email/${token}`;
+    const fullName = user.firstName + " " + user.lastName;
+    await sendVerifyingUserEmail(user.email, fullName, link);
+
+    // const { password, isAdmin, ...otherDetails } = payload._doc;
+    // if (!payload) throw staticResponseMessageObject.verificationDataNotUpdated;
+
+    return res.status(200).json({
+      message: "Verification mail sent...!",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   verifyEmail,
+  resendVerificationEmail,
   register,
   login,
 };

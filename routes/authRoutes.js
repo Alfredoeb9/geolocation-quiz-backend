@@ -4,6 +4,7 @@ const {
   login,
   verifyEmail,
   resendVerificationEmail,
+  updateUser,
 } = require("../controller/authController");
 const { requireAuth } = require("../middleware/requireAuth");
 
@@ -14,5 +15,6 @@ router.post("/register", register);
 router.post("/verify-email", requireAuth, verifyEmail);
 router.post("/resend-verification-email", resendVerificationEmail);
 router.post("/login", login);
+router.put("/updateuser", updateUser);
 
 module.exports = router;

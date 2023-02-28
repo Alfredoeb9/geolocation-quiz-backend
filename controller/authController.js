@@ -19,6 +19,9 @@ const register = async (req, res, next) => {
   try {
     const { username, firstName, lastName, email, password, isAdmin } =
       req.body;
+
+    const isValidEmail = await emailRegex(email);
+    if (!isValidEmail) throw Error("Please provide a proper email");
     // console.log(req);
     const newUser = await User.register(
       username,
@@ -174,9 +177,45 @@ const resendVerificationEmail = async (req, res, next) => {
   }
 };
 
+// update the user
+const updateUser = async (req, res) => {
+  // const { id } = req.query;
+  const { firstName, lastName, email } = req.body;
+
+  // console.log(req.params);
+
+  try {
+    // if (id) {
+    // const body = req.body;
+
+    // fire up the login function from the userModel
+    const newUpdatedUser = await User.findOneAndUpdate(
+      { email: email },
+      {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+      },
+      { new: true }
+    );
+
+    // if (!newUpdatedUser) {
+    //   return res.status(400).json({ error: "No email "})
+    // }
+
+    return res.status(201).json(newUpdatedUser);
+    // } else {
+    //   return res.status(401).send({ error: "User Not Found" });
+    // }
+  } catch (error) {
+    return res.status(401).send({ error });
+  }
+};
+
 module.exports = {
   verifyEmail,
   resendVerificationEmail,
   register,
   login,
+  updateUser,
 };

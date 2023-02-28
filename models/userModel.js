@@ -125,20 +125,11 @@ userSchema.statics.register = async function (
 
 // Static verify method
 userSchema.statics.verifyEmail = async function (query = {}) {
-  console.log("query", query);
+  // console.log("query", query);
   const user = await this.findOne(query).lean().exec();
-  console.log("user", user);
+  // console.log("user", user);
   if (user) {
     user.userId = user._id;
-    // if (user.avatar) {
-    //   const regExp =
-    //     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
-    //   if (!regExp.test(user.avatar)) {
-    //     user.avatar = (
-    //       path.join(__dirname, "/../../", "/public/upload/") + user.avatar
-    //     ).replace(/\\/g, "/");
-    //   }
-    // }
   }
 
   return user;
@@ -146,6 +137,11 @@ userSchema.statics.verifyEmail = async function (query = {}) {
 
 userSchema.statics.updateVerification = async function (_id, body) {
   const result = await this.findByIdAndUpdate(_id, body, { new: true }).exec();
+  if (!result) {
+    throw Error(
+      "Sorry no such user found please refresh and try updating again!"
+    );
+  }
   return result;
 };
 

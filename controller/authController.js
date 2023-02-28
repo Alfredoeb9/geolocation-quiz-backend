@@ -55,9 +55,7 @@ const register = async (req, res, next) => {
     // await newUser.save();
     // res.status(201).send("User has been created");
   } catch (error) {
-    return res
-      .status(400)
-      .json({ error: "Refresh the page and please try signing up again!" });
+    return res.status(400).json({ error: error.message });
   }
 };
 
@@ -94,7 +92,7 @@ const login = async (req, res, next) => {
     // await newUser.save();
     // res.status(201).send("User has been created");
   } catch (error) {
-    console.log(error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -105,14 +103,15 @@ const verifyEmail = async (req, res, next) => {
     });
     if (user && user.verification && user.verification.isVerified)
       // throw staticResponseMessageObject.emailAlreadyVerified;
-      console.log("Email already verified");
+      return res.status(400).json({ error: "Email is verified" });
 
     if (user && user.verification && user.verification.expireTime) {
       const isTokenValid = isDatePast(
         getCurrentDateTime(),
         user.verification.expireTime
       );
-      if (!isTokenValid) console.log("Verification Token Expired");
+      if (!isTokenValid)
+        res.status(400).json({ error: "Toekn verification Expired" });
       // throw staticResponseMessageObject.verificationTokenExpired;
     }
 
@@ -137,7 +136,8 @@ const verifyEmail = async (req, res, next) => {
     });
   } catch (error) {
     //log(error)
-    console.log("From verify email:: ", error);
+    return res.status(400).json({ error: error });
+    // console.log("From verify email:: ", error);
     // return next(Boom.notAcceptable(error.message).output.payload);
   }
 };
@@ -151,13 +151,13 @@ const resendVerificationEmail = async (req, res, next) => {
 
     const user = await User.verifyEmail({ email: email.toLowerCase() });
     if (!user) {
-      console.log("new user found...!");
+      return res.status(400).json({ error: "new user found...!" });
       // return next(
       //   Boom.notFound((await responseMessageObject("User", null)).notFoundError)
       // );
     }
     if (user && user.verification && user.verification.isVerified)
-      console.log("Eamil is verified");
+      return res.status(400).json({ error: "Email is verified" });
     // throw staticResponseMessageObject.emailAlreadyVerified;
 
     const token = await createToken(user._id);
@@ -173,7 +173,7 @@ const resendVerificationEmail = async (req, res, next) => {
       message: "Verification mail sent...!",
     });
   } catch (error) {
-    console.log(error);
+    return res.status(400).json({ error: error.message });
   }
 };
 

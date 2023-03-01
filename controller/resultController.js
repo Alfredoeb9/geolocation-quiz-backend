@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 
 const getResult = async (req, res) => {
   try {
-    const result = await Result.find();
+    const { username } = req.body;
+    const { id } = req.params;
+    const result = await Result.find({ quizId: id, username: username });
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    res.status(400).json({ error: error });
+    return res.status(400).json({ error: error });
   }
 };
 

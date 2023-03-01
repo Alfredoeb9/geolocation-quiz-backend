@@ -6,13 +6,22 @@ const getGeolocationQuiz = async (req, res) => {
   const { id } = req.params;
   const { quizNum } = req.body;
 
+  let geolocationQuiz;
+
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No Such Quiz!" });
   }
 
-  const geolocationQuiz = await Geolocation.findById(id, {
-    questions: { $slice: Number(quizNum) },
-  });
+  if (req.method == "GET") {
+    geolocationQuiz = await Geolocation.findById(id);
+    // return geolocationQuiz;
+  } else if (req.method == "PUT") {
+    console.log("POST RAN");
+    geolocationQuiz = await Geolocation.findById(id, {
+      questions: { $slice: Number(quizNum) },
+    });
+    // return geolocationQuiz;
+  }
 
   if (!geolocationQuiz) {
     return res.status(400).json({ error: "No Such Quiz!" });
@@ -22,7 +31,6 @@ const getGeolocationQuiz = async (req, res) => {
 };
 
 const getGeolocationQuizzes = async (req, res) => {
-  console.log("grabbing all quzzes");
   try {
     const allGeolocationQuizzes = await Geolocation.find();
     res.status(200).json(allGeolocationQuizzes);

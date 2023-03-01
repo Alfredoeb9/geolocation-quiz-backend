@@ -21,6 +21,7 @@ router.get("/", getGeolocationQuizzes);
 
 // GET one geolocation-quiz-stages
 router.post("/:id", getGeolocationQuiz);
+router.get("/:id", getGeolocationQuiz);
 
 // DELETE seleceted geolocation-quiz
 router.delete("/:id", verifyAdmin, deleteGeolocationQuiz);

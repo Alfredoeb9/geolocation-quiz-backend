@@ -13,10 +13,6 @@ const geolocationQuizSchema = new Schema(
         answer: String,
       },
     ],
-    paidContent: {
-      type: String,
-      required: true,
-    },
   },
   { timestamps: true }
 );

@@ -88,7 +88,7 @@ const login = async (req, res, next) => {
     // token: { accessToken: verification.token }, _id: updatedUser._id, email: updatedUser.email, type: updatedUser.type, aiCredits: updatedUser.aiCredits, firstName: updatedUser.firstName, lastName: updatedUser.lastName, country: updatedUser.country }
 
     // return the users info down below
-    return res.status(200).json({ email, token, ...otherDetails });
+    return res.status(200).json({ email, token, ...otherDetails, isAdmin });
     // await newUser.save();
     // res.status(201).send("User has been created");
   } catch (error) {

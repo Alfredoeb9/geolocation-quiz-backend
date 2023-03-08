@@ -16,7 +16,6 @@ const getGeolocationQuiz = async (req, res) => {
     geolocationQuiz = await Geolocation.findById(id);
     // return geolocationQuiz;
   } else if (req.method == "PUT") {
-    console.log("POST RAN");
     geolocationQuiz = await Geolocation.findById(id, {
       questions: { $slice: Number(quizNum) },
     });
@@ -34,6 +33,17 @@ const getGeolocationQuizzes = async (req, res) => {
   try {
     const allGeolocationQuizzes = await Geolocation.find();
     res.status(200).json(allGeolocationQuizzes);
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
+};
+
+const getSpecificGeolocationName = async (req, res) => {
+  try {
+    const { geoTopic } = req.body;
+    console.log(geoTopic);
+    const geoLocationName = await Geolocation.find({ country: geoTopic });
+    res.status(200).json(geoLocationName);
   } catch (error) {
     res.status(400).json({ error: error });
   }
@@ -103,4 +113,5 @@ module.exports = {
   createGeolocationQuiz,
   deleteGeolocationQuiz,
   answerGeolocationQuiz,
+  getSpecificGeolocationName,
 };

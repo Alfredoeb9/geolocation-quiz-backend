@@ -9,12 +9,14 @@ const geolocationQuizSchema = new Schema(
     },
     questions: [
       {
-        question: String,
-        answer: String,
+        question: { type: String },
+        answer: { type: String },
+        id: { type: Number },
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
+  { typeKey: "$type" }
 );
 
 module.exports = mongoose.model("GeolocationQuiz", geolocationQuizSchema);

@@ -15,7 +15,7 @@ const getGeolocationQuiz = async (req, res) => {
   if (req.method == "GET") {
     geolocationQuiz = await Geolocation.findById(id);
     // return geolocationQuiz;
-  } else if (req.method == "PUT") {
+  } else if (req.method == "POST") {
     geolocationQuiz = await Geolocation.findById(id, {
       questions: { $slice: Number(quizNum) },
     });
@@ -51,8 +51,6 @@ const getSpecificGeolocationName = async (req, res) => {
 
 const createGeolocationQuiz = async (req, res) => {
   // grab all request from body
-  //   console.log(req.body);
-
   let emptyFields = [];
 
   const newGeolocationQuiz = new Geolocation(req.body);
@@ -60,10 +58,6 @@ const createGeolocationQuiz = async (req, res) => {
 
   if (!req.body.country) {
     emptyFields.push("title");
-  }
-
-  if (!req.body.paidContent) {
-    emptyFields.push("paidContent");
   }
 
   if (emptyFields.length > 0) {
@@ -85,6 +79,52 @@ const createGeolocationQuiz = async (req, res) => {
   } catch (error) {
     return res.status(400).json({ error: error });
   }
+};
+
+const updateGeolocationQuiz = async (req, res) => {
+  const { id } = req.params;
+  const questionsUpdating = req?.body?.data;
+  const idTargets = [];
+  const questionTargets = [];
+  let questionAnswerData = [];
+  let findData;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ error: "No such workout" });
+  }
+
+  req?.body?.data?.map((id, index) => {
+    idTargets.push(id?.id);
+
+    questionAnswerData.push({
+      id: id?.id,
+      question: id?.question,
+      answer: id?.answer,
+    });
+  });
+
+  questionAnswerData.map(async (value) => {
+    findData = await Geolocation.updateOne(
+      {
+        _id: id,
+        "questions.id": value?.id,
+      },
+      {
+        $set: {
+          "questions.$.question": value?.question,
+          "questions.$.answer": value?.answer,
+        },
+      },
+      { new: true }
+    );
+  });
+
+  // if (!findData) {
+  //   return res.status(400).json({ error: "No such workout" });
+  // }
+
+  // // res.send(workout)
+  return res.status(200).json({ msg: "Documents updated...!" });
 };
 
 const deleteGeolocationQuiz = async (req, res) => {
@@ -114,4 +154,5 @@ module.exports = {
   deleteGeolocationQuiz,
   answerGeolocationQuiz,
   getSpecificGeolocationName,
+  updateGeolocationQuiz,
 };

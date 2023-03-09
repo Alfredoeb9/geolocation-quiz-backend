@@ -60,15 +60,15 @@ const verifyUser = async (req, res, next) => {
 };
 
 const verifyAdmin = async (req, res, next) => {
-  const { cookie } = req.headers;
+  console.log(req.headers);
+  const { authorization } = req.headers;
 
-  if (!cookie) {
-    return res.status(401).json({ error: "Authorization token required!" });
-    // return next(handleError(401, "Authorization token required"));
+  if (!authorization) {
+    return res.status(401).json({ error: "Authorization token required" });
   }
 
   // split the auth value and split on the space
-  let token = cookie.split("access_token=")[1];
+  const token = authorization.split(" ")[1];
 
   try {
     const user = await verifyToken(token, process.env.JWT_SECRET, res);

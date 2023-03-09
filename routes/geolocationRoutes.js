@@ -6,6 +6,7 @@ const {
   createGeolocationQuiz,
   deleteGeolocationQuiz,
   getSpecificGeolocationName,
+  updateGeolocationQuiz,
 } = require("../controller/geolocationController");
 const { verifyAdmin, verifyUser } = require("../middleware/requireAuth");
 const router = express.Router();
@@ -16,6 +17,9 @@ const router = express.Router();
 
 // POST new geolocation-quiz
 router.post("/createquiz", verifyAdmin, createGeolocationQuiz);
+
+// Update geolocation-quiz
+router.put("/updatequiz/:id", verifyAdmin, updateGeolocationQuiz);
 
 // GET ALL geolocation-quiz-stages
 router.get("/", getGeolocationQuizzes);

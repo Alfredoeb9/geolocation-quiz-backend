@@ -30,7 +30,7 @@ router.post("/:id", getGeolocationQuiz);
 router.get("/:id", getGeolocationQuiz);
 
 // DELETE seleceted geolocation-quiz
-router.delete("/:id", verifyAdmin, deleteGeolocationQuiz);
+router.delete("/deletequiz/:id", verifyAdmin, deleteGeolocationQuiz);
 
 // POST answers to geolocation-quiz-stages
 router.post("/:id", answerGeolocationQuiz);

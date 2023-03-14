@@ -10,13 +10,13 @@ const usFactSchema = new Schema(
       type: String,
     },
     statehood: {
-      type: Number,
+      type: String,
     },
     majorCities: {
       type: String,
     },
     population: {
-      type: Number,
+      type: String,
     },
     area: {
       type: String,

@@ -6,6 +6,7 @@ const authRoutes = require("./routes/authRoutes");
 const geolocationRoutes = require("./routes/geolocationRoutes");
 const userRoutes = require("./routes/userRoutes");
 const resultRoutes = require("./routes/resultRoutes");
+const usFactRoutes = require("./routes/usFactRoutes");
 
 // express app
 const app = express();
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/geolocation", geolocationRoutes);
+app.use("/api/usfact", usFactRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/result", resultRoutes);
 

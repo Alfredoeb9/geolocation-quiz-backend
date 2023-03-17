@@ -1,5 +1,6 @@
 const Geolocation = require("../models/geolocationModel");
 const mongoose = require("mongoose");
+const { shuffleArray } = require("../lib/utils/shuffleArray");
 
 const getGeolocationQuiz = async (req, res) => {
   // grab the id of the geolocation quiz wanting to play in the URL
@@ -7,6 +8,7 @@ const getGeolocationQuiz = async (req, res) => {
   const { quizNum } = req.body;
 
   let geolocationQuiz;
+  let geolocationQuiz2;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No Such Quiz!" });
@@ -16,9 +18,19 @@ const getGeolocationQuiz = async (req, res) => {
     geolocationQuiz = await Geolocation.findById(id);
     // return geolocationQuiz;
   } else if (req.method == "POST") {
-    geolocationQuiz = await Geolocation.findById(id, {
-      questions: { $slice: Number(quizNum) },
-    });
+    /*
+        Got to find a fix to send random question array instead of orderly array
+    */
+    // geolocationQuiz = await Geolocation.findById(id, {
+    //   questions: { $slice: Number(quizNum) },
+    // });
+    geolocationQuiz = await Geolocation.findById(id);
+
+    // console.log(geolocationQuiz.questions);
+    await shuffleArray(geolocationQuiz.questions);
+
+    // geolocationQuiz.questions.slice(0, Number(quizNum));
+
     // return geolocationQuiz;
   }
 

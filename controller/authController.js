@@ -1,3 +1,6 @@
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const validator = require("validator");
 const {
   log,
   checkRequiredParams,
@@ -8,8 +11,12 @@ const {
 } = require("../lib/utils/utils");
 const User = require("../models/userModel");
 const { adminFrontendUrl } = require("../bin/constant/setup");
-const { sendVerifyingUserEmail } = require("../lib/mailer");
+const {
+  sendVerifyingUserEmail,
+  sendForgotPasswordEmail,
+} = require("../lib/mailer");
 const jwt = require("jsonwebtoken");
+const { relativeTimeRounding } = require("moment");
 
 const createToken = async (_id, isAdmin) => {
   return jwt.sign({ _id, isAdmin: isAdmin }, process.env.JWT_SECRET);
@@ -177,6 +184,78 @@ const resendVerificationEmail = async (req, res, next) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Please provide an email!" });
+    }
+
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(400).json({ error: "Email Not Registered!" });
+    }
+
+    const token = await createToken(user._id);
+    const link = `${process.env.REACT_APP_AUTH_BASE_URL}/reset-password/${token}`;
+    const fullName = user.firstName + " " + user.lastName;
+
+    await sendForgotPasswordEmail(email, fullName, link);
+
+    return res.status(200).json({ message: "Verification mail sent!" });
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { truePassword } = req.body;
+    const newId = req.user._id.toString();
+    if (!truePassword) {
+      return res.status(400).json({ error: "Please provide a password!" });
+    }
+    if (truePassword.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "Provide password with 6 characters or more!" });
+    }
+
+    if (!validator.isStrongPassword(truePassword)) {
+      return res.status(400).json({ error: "Password not strong enough" });
+    }
+
+    let decodeUser = null;
+    if (req.user) {
+      decodeUser = newId;
+    }
+    const user = await User.findOne({ _id: decodeUser });
+    if (!user) {
+      return res.status(400).json({ error: "No such user found!" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+
+    // create a has and attach password + hash
+    const hash = await bcrypt.hash(truePassword, salt);
+
+    const payload = await User.findByIdAndUpdate(
+      { _id: decodeUser },
+      { password: hash },
+      { new: true }
+    ).exec();
+    if (!payload) {
+      return res
+        .status(400)
+        .json({ error: "Password could not be updated please try again!" });
+    }
+
+    return res.status(200).json({ message: "Password was updated!" });
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+};
+
 // update the user
 const updateUser = async (req, res) => {
   // const { id } = req.query;
@@ -218,4 +297,6 @@ module.exports = {
   register,
   login,
   updateUser,
+  forgotPassword,
+  resetPassword,
 };

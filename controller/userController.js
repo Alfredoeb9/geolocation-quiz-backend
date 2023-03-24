@@ -26,7 +26,7 @@ const updateUser = async (req, res) => {
     //   return res.status(400).json({ error: "No email "})
     // }
 
-    res.status(201).json(newUpdatedUser);
+    return res.status(201).json(newUpdatedUser);
     // } else {
     //   return res.status(401).send({ error: "User Not Found" });
     // }

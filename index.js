@@ -2,11 +2,11 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const authRoutes = require("../routes/authRoutes");
-const geolocationRoutes = require("../routes/geolocationRoutes");
-const userRoutes = require("../routes/userRoutes");
-const resultRoutes = require("../routes/resultRoutes");
-const usFactRoutes = require("../routes/usFactRoutes");
+const authRoutes = require("./routes/authRoutes");
+const geolocationRoutes = require("./routes/geolocationRoutes");
+const userRoutes = require("./routes/userRoutes");
+const resultRoutes = require("./routes/resultRoutes");
+const usFactRoutes = require("./routes/usFactRoutes");
 
 // express app
 const app = express();

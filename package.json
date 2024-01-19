@@ -2,10 +2,10 @@
   "name": "geolocation-quiz-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node api/server.js",
-    "devStart": "nodemon api/server.js"
+    "start": "node api/index.js",
+    "devStart": "nodemon api/index.js"
   },
   "keywords": [],
   "author": "Alfredoeb9",

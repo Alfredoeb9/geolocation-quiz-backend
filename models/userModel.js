@@ -67,8 +67,6 @@ userSchema.statics.login = async function (email, password) {
   // need to march the password with hash password
   const passwordMatch = await bcrypt.compare(password, user.password);
 
-  console.log("password matching", passwordMatch);
-
   if (!passwordMatch) {
     throw Error("Incorrect login credentials");
   }
@@ -125,9 +123,7 @@ userSchema.statics.register = async function (
 
 // Static verify method
 userSchema.statics.verifyEmail = async function (query = {}) {
-  // console.log("query", query);
   const user = await this.findOne(query).lean().exec();
-  // console.log("user", user);
   if (user) {
     user.userId = user._id;
   }

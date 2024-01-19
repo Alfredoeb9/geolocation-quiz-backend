@@ -8,7 +8,6 @@ const getGeolocationQuiz = async (req, res) => {
   const { quizNum } = req.body;
 
   let geolocationQuiz;
-  let geolocationQuiz2;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No Such Quiz!" });
@@ -26,12 +25,8 @@ const getGeolocationQuiz = async (req, res) => {
     // });
     geolocationQuiz = await Geolocation.findById(id);
 
-    // console.log(geolocationQuiz.questions);
     await shuffleArray(geolocationQuiz.questions);
 
-    // geolocationQuiz.questions.slice(0, Number(quizNum));
-
-    // return geolocationQuiz;
   }
 
   if (!geolocationQuiz) {
@@ -53,7 +48,6 @@ const getGeolocationQuizzes = async (req, res) => {
 const getSpecificGeolocationName = async (req, res) => {
   try {
     const { geoTopic } = req.body;
-    console.log(geoTopic);
     const geoLocationName = await Geolocation.find({ country: geoTopic });
     res.status(200).json(geoLocationName);
   } catch (error) {
@@ -66,7 +60,6 @@ const createGeolocationQuiz = async (req, res) => {
   let emptyFields = [];
 
   const newGeolocationQuiz = new Geolocation(req.body);
-  //   console.log(newGeolocationQuiz);
 
   if (!req.body.country) {
     emptyFields.push("title");
@@ -81,13 +74,9 @@ const createGeolocationQuiz = async (req, res) => {
   try {
     const savedGeolocationQuiz = await newGeolocationQuiz.save();
 
-    // console.log(savedGeolocationQuiz);
 
     return res.status(201).json(savedGeolocationQuiz);
-    // const geolocationQuiz = await Geolocation.create({
-    //     country,
-    //     questions
-    // })
+
   } catch (error) {
     return res.status(400).json({ error: error });
   }
@@ -131,11 +120,6 @@ const updateGeolocationQuiz = async (req, res) => {
     );
   });
 
-  // if (!findData) {
-  //   return res.status(400).json({ error: "No such workout" });
-  // }
-
-  // // res.send(workout)
   return res.status(200).json({ msg: "Documents updated...!" });
 };
 

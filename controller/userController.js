@@ -2,14 +2,9 @@ const User = require("../models/userModel");
 
 // update the user
 const updateUser = async (req, res) => {
-  // const { id } = req.query;
   const { firstName, lastName, email } = req.body;
 
-  // console.log(req.params);
-
   try {
-    // if (id) {
-    // const body = req.body;
 
     // fire up the login function from the userModel
     const newUpdatedUser = await User.findOneAndUpdate(
@@ -22,14 +17,8 @@ const updateUser = async (req, res) => {
       { new: true }
     );
 
-    // if (!newUpdatedUser) {
-    //   return res.status(400).json({ error: "No email "})
-    // }
-
     return res.status(201).json(newUpdatedUser);
-    // } else {
-    //   return res.status(401).send({ error: "User Not Found" });
-    // }
+
   } catch (error) {
     return res.status(401).send({ error: error.message });
   }

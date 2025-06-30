@@ -39,11 +39,12 @@ const register = async (req, res, next) => {
 
     // create a token per user
     const token = await createToken(newUser._id);
-
+    if (!token) {
+      return res.status(400).json({ error: "Token could not be created" });
+    }
 
     const link = `${process.env.REACT_APP_AUTH_BASE_URL}/verify-email/${token}`;
     const fullName = newUser.firstName + " " + newUser.lastName;
-
 
     await sendVerifyingUserEmail(newUser.email, fullName, link);
 
@@ -58,9 +59,14 @@ const register = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  const { email } = req.body;
+  const { email, password } = req.body;
+
   try {
-    const user = await User.login(email, req.body.password);
+    if (!email || !password) {
+      return res.status(400).json({ error: "Please provide email and password" });
+    }
+
+    const user = await User.login(email, password);
 
     // create a token per user
     const token = await createToken(user._id, user._doc.isAdmin);
@@ -76,14 +82,18 @@ const login = async (req, res, next) => {
       { verification }
     );
 
-    const { password, isAdmin, ...otherDetails } = updatedUser._doc;
+    if (!updatedUser) {
+      return res.status(400).json({ error: "User not found or not updated" });
+    }
 
+    const { password: _, isAdmin, ...otherDetails } = updatedUser._doc;
 
     // return the users info down below
     return res.status(200).json({ email, token, ...otherDetails, isAdmin });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Login error:", error);
+    return res.status(400).json({ error: error.message });
   }
 };
 
@@ -102,7 +112,7 @@ const verifyEmail = async (req, res, next) => {
         user.verification.expireTime
       );
       if (!isTokenValid)
-        res.status(400).json({ error: "Toekn verification Expired" });
+        return res.status(400).json({ error: "Toekn verification Expired" });
       // throw staticResponseMessageObject.verificationTokenExpired;
     }
 
@@ -116,7 +126,7 @@ const verifyEmail = async (req, res, next) => {
       { verification }
     );
     if (!payload)
-      res.status(400).json({ error: "Verification Data Not Updated" });
+      return res.status(400).json({ error: "Verification Data Not Updated" });
 
     const { password, isAdmin, ...otherDetails } = payload._doc;
 

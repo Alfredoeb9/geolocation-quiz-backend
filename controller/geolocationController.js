@@ -23,9 +23,9 @@ const getGeolocationQuiz = async (req, res) => {
     // geolocationQuiz = await Geolocation.findById(id, {
     //   questions: { $slice: Number(quizNum) },
     // });
-    geolocationQuiz = await Geolocation.findById(id);
-
-    await shuffleArray(geolocationQuiz.questions);
+    const geolocationQuiz = await Geolocation.findById(id, {
+      questions: { $slice: Number(quizNum) }
+    }).lean();
 
   }
 

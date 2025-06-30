@@ -11,19 +11,31 @@ const usFactRoutes = require("./routes/usFactRoutes");
 // express app
 const app = express();
 
+// CORS configuration - put this BEFORE other middleware
+const corsOptions = {
+  origin: [process.env.REACT_APP_URL, '*', 'http://localhost:3002'].filter(Boolean), // Add your frontend URLs
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+};
+
 // enable CORS
-app.use(cors());
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
-// middleware
+// Add request logging
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
+});
+
+// Add a test route to verify server is working
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
 });
 
 app.use("/api/auth", authRoutes);
@@ -31,6 +43,7 @@ app.use("/api/geolocation", geolocationRoutes);
 app.use("/api/usfact", usFactRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/result", resultRoutes);
+
 
 mongoose.set("strictQuery", false);
 

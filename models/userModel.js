@@ -52,23 +52,23 @@ const userSchema = new Schema(
 userSchema.statics.login = async function (email, password) {
   // Validation
   if (!email || !password) {
-    throw Error("All fields must be filled");
+    throw Error("Email and password are required");
   }
 
   // Find an email within the database
-  const user = await this.findOne({ email });
+    const user = await this.findOne({ email: email.toLowerCase() }); // Case insensitive
 
   // if no user exists then throw error
 
   if (!user) {
-    throw Error("Incorrect Email, try signing up!");
+    throw Error("Invalid email or password");
   }
 
   // need to march the password with hash password
   const passwordMatch = await bcrypt.compare(password, user.password);
 
   if (!passwordMatch) {
-    throw Error("Incorrect login credentials");
+    throw Error("Invalid email or password");
   }
 
   return user;

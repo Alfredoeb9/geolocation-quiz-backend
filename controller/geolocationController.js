@@ -17,20 +17,34 @@ const getGeolocationQuiz = async (req, res) => {
     geolocationQuiz = await Geolocation.findById(id);
     // return geolocationQuiz;
   } else if (req.method == "POST") {
-    /*
-        Got to find a fix to send random question array instead of orderly array
-    */
-    // geolocationQuiz = await Geolocation.findById(id, {
-    //   questions: { $slice: Number(quizNum) },
-    // });
-    const geolocationQuiz = await Geolocation.findById(id, {
-      questions: { $slice: Number(quizNum) }
-    }).lean();
+    // Use MongoDB aggregation to get random questions
+    const result = await Geolocation.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      { $unwind: "$questions" },
+      { $sample: { size: Number(quizNum) } }, // Get random questions
+      { 
+        $group: {
+          _id: "$_id",
+          country: { $first: "$country" },
+          title: { $first: "$title" },
+          questions: { $push: "$questions" }
+        }
+      }
+    ]);
 
+    geolocationQuiz = result[0] || null;
   }
 
   if (!geolocationQuiz) {
     return res.status(400).json({ error: "No Such Quiz!" });
+  }
+
+  // Normalize answers when sending quiz data
+  if (geolocationQuiz.questions) {
+    geolocationQuiz.questions = geolocationQuiz.questions.map(question => ({
+      ...question,
+      answer: question.answer.toLowerCase().trim() // Normalize correct answers
+    }));
   }
 
   return res.status(200).json(geolocationQuiz);
@@ -91,7 +105,7 @@ const updateGeolocationQuiz = async (req, res) => {
   let findData;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "No such workout" });
+    return res.status(404).json({ error: "No such question" });
   }
 
   req?.body?.data?.map((id, index) => {

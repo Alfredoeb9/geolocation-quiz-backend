@@ -13,23 +13,32 @@ const app = express();
 
 // CORS configuration - put this BEFORE other middleware
 const corsOptions = {
-  origin: [process.env.REACT_APP_URL, '*', 'http://localhost:3002'].filter(Boolean), // Add your frontend URLs
+  origin: [
+    process.env.REACT_APP_URL,
+    'https://geolocation-quiz-frontend.vercel.app', // Add your production frontend URL
+    'http://localhost:3000',
+    'http://localhost:3002'
+  ].filter(Boolean),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+  optionsSuccessStatus: 200 // For legacy browser support
 };
 
 // enable CORS
 app.use(cors(corsOptions));
 
 // Handle preflight requests
-app.options('*', cors(corsOptions));
+// app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
 // Add request logging
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  console.log('Origin:', req.headers.origin);
+  console.log('User-Agent:', req.headers['user-agent']);
+  console.log('Request Body:', req.body);
   next();
 });
 

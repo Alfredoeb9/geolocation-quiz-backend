@@ -19,10 +19,17 @@ const storeResult = async (req, res) => {
 
     if (!result) throw new Error("Data Not Provided...!");
 
+    // Normalize the result data before storing
+    const normalizedResult = result.map(item => ({
+      ...item,
+      userAnswer: item.userAnswer ? item.userAnswer.toLowerCase().trim() : '',
+      correctAnswer: item.correctAnswer ? item.correctAnswer.toLowerCase().trim() : ''
+    }));
+
     const createdResult = await Result.create({
       username,
       quizId,
-      result,
+      result: normalizedResult,
       attempts,
       points,
       achived,

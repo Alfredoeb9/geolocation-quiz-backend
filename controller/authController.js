@@ -88,11 +88,25 @@ const login = async (req, res, next) => {
 
     const { password: _, isAdmin, ...otherDetails } = updatedUser._doc;
 
+    res.set({
+      'Access-Control-Allow-Origin': req.headers.origin || '*',
+      'Access-Control-Allow-Credentials': 'true',
+      'Content-Type': 'application/json'
+    });
+
     // return the users info down below
     return res.status(200).json({ email, token, ...otherDetails, isAdmin });
 
   } catch (error) {
     console.error("Login error:", error);
+
+    // Set CORS headers for error responses too
+    res.set({
+      'Access-Control-Allow-Origin': req.headers.origin || '*',
+      'Access-Control-Allow-Credentials': 'true',
+      'Content-Type': 'application/json'
+    });
+    
     return res.status(400).json({ error: error.message });
   }
 };
